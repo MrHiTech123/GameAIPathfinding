@@ -37,11 +37,7 @@ void ANPC_Controller::BeginPlay()
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(),FName("Waypoint"),Waypoints);
 
 	
-	//SortWaypointsFromNearestToFurthest();
-	if (NPC_State == ENPC_State::ORDERED_WAYPOINT || true)
-	{
-		Waypoints.Sort(DistanceSortPredicate());
-	}
+	Waypoints.Sort(DistanceSortPredicate());
 	
 	UE_LOG(LogTemp, Warning, TEXT("Waypoint amount: %d"), Waypoints.Num());
 	// Select a new destination immediately
