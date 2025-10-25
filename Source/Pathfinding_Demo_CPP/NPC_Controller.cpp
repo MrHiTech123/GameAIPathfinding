@@ -38,7 +38,7 @@ void ANPC_Controller::BeginPlay()
 
 	
 	//SortWaypointsFromNearestToFurthest();
-	if (NPC_State == ENPC_State::ORDERED_WAYPOINT)
+	if (NPC_State == ENPC_State::ORDERED_WAYPOINT || true)
 	{
 		Waypoints.Sort(DistanceSortPredicate());
 	}
