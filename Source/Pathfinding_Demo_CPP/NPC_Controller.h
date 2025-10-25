@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "NavigationSystem.h"
+#include "DistanceSortFunctor.h"
 #include "NPC_Controller.generated.h"
 
 UENUM(Blueprintable)
@@ -58,5 +59,6 @@ public:
 	bool OrderedWaypoint(FNavLocation& Destination);
 	bool RandomWaypoint(FNavLocation& Destination);
 	float DistanceFrom(AActor* other) const;
+	DistanceSortFunctor DistanceSortPredicate();
 	void SortWaypointsFromNearestToFurthest();
 };
