@@ -14,6 +14,41 @@ ANPC_Controller::ANPC_Controller()
 
 	
 }
+
+float ANPC_Controller::DistanceFrom(AActor* other) const
+{
+	return (other->GetActorLocation() - GetPawn()->GetActorLocation()).Size();
+}
+
+
+void ANPC_Controller::SortWaypointsFromNearestToFurthest()
+{
+	int indexOfInsertedElement = 1;
+	while (indexOfInsertedElement < Waypoints.Num())
+	{
+		int insertionIndex = indexOfInsertedElement;
+		UE_LOG(LogTemp, Log, TEXT("indexOfInsertedElement: %d, insertionIndex: %d, Waypoints.num: %d"), indexOfInsertedElement, insertionIndex, Waypoints.Num())
+		while (insertionIndex > 0)
+		{
+			if (DistanceFrom(Waypoints[insertionIndex] - 1) >
+				DistanceFrom(Waypoints[insertionIndex]
+			)) {
+				AActor* temp = Waypoints[insertionIndex - 1];
+				Waypoints[insertionIndex - 1] = Waypoints[insertionIndex];
+				Waypoints[insertionIndex] = temp;
+			}
+			else
+			{
+				break;
+			}
+
+			--insertionIndex;
+		}
+		++indexOfInsertedElement;
+	}
+}
+
+
 void ANPC_Controller::BeginPlay()
 {
 	Super::BeginPlay();
@@ -21,7 +56,11 @@ void ANPC_Controller::BeginPlay()
 	
 	// find all waypoints
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(),FName("Waypoint"),Waypoints);
-	UE_LOG()
+
+	
+	SortWaypointsFromNearestToFurthest();
+	
+	UE_LOG(LogTemp, Warning, TEXT("Waypoint amount: %d"), Waypoints.Num());
 	// Select a new destination immediately
 	NewDestination();
 }

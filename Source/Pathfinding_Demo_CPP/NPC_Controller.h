@@ -57,4 +57,6 @@ public:
 	bool Wander(FNavLocation& Destination);
 	bool OrderedWaypoint(FNavLocation& Destination);
 	bool RandomWaypoint(FNavLocation& Destination);
+	float DistanceFrom(AActor* other) const;
+	void SortWaypointsFromNearestToFurthest();
 };
