@@ -38,7 +38,10 @@ void ANPC_Controller::BeginPlay()
 
 	
 	//SortWaypointsFromNearestToFurthest();
-	Waypoints.Sort(DistanceSortPredicate());
+	if (NPC_State == ENPC_State::ORDERED_WAYPOINT)
+	{
+		Waypoints.Sort(DistanceSortPredicate());
+	}
 	
 	UE_LOG(LogTemp, Warning, TEXT("Waypoint amount: %d"), Waypoints.Num());
 	// Select a new destination immediately
