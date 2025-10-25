@@ -6,7 +6,7 @@ private:
 	FVector location;
 public:
 	DistanceSortFunctor(FVector location) {this->location = location;};
-	bool operator()(AActor* a, AActor* b);
+	bool operator()(AActor& a, AActor& b) const;
 };
 
 
