@@ -21,7 +21,7 @@ void ANPC_Controller::BeginPlay()
 	
 	// find all waypoints
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(),FName("Waypoint"),Waypoints);
-	
+	UE_LOG()
 	// Select a new destination immediately
 	NewDestination();
 }
