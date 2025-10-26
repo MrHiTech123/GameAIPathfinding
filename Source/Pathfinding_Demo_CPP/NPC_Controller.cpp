@@ -3,7 +3,10 @@
 #include "DistanceSortFunctor.h"
 #include "NavigationSystem.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+
+#define NEAR_EACH_OTHER_DISTANCE 1000.0
 
 ANPC_Controller::ANPC_Controller()
 {
@@ -44,6 +47,8 @@ void ANPC_Controller::BeginPlay()
 	NewDestination();
 }
 
+
+
 void ANPC_Controller::NewDestination()
 {
 	
@@ -65,6 +70,9 @@ void ANPC_Controller::NewDestination()
 			break;
 		case ENPC_State::RANDOM_WAYPOINT:
 			bSuccess=RandomWaypoint(NavLocation);
+			break;
+		case ENPC_State::LONELY_WAYPOINT:
+			bSuccess = LonelyWaypoint(NavLocation);
 			break;
 	}
 
@@ -116,6 +124,48 @@ bool ANPC_Controller::RandomWaypoint(FNavLocation& Destination)
 		}
 	}
 	return success;
+}
+
+bool ANPC_Controller::NearEachOther(AActor* a, AActor* b)
+{
+	return FVector::Dist(a->GetActorLocation(), b->GetActorLocation()) < NEAR_EACH_OTHER_DISTANCE;
+}
+
+int ANPC_Controller::PeopleNearAmount(AActor* waypoint)
+{
+	TArray<AActor*> AllMovementComponents;
+	UGameplayStatics::GetAllActorsWithTag(GetPawn()->GetWorld(), TEXT("person"), AllMovementComponents);
+	int toReturn = 0;
+	for (AActor* person : AllMovementComponents)
+	{
+		if (NearEachOther(person, waypoint))
+		{
+			++toReturn;
+		}
+	}
+	return toReturn;
+}
+
+bool ANPC_Controller::LonelyWaypoint(FNavLocation& Destination)
+{
+	if (Waypoints.Num() < 0) return false;
+	
+	AActor* leastPopular = Waypoints[0];
+	for (AActor* waypoint : Waypoints)
+	{
+		int nearWaypoint = PeopleNearAmount(waypoint);
+		int nearLeastPopular = PeopleNearAmount(leastPopular);
+		int distWaypoint = FVector::Dist(waypoint->GetActorLocation(), GetPawn()->GetActorLocation());
+		int distLeastPopular = FVector::Dist(leastPopular->GetActorLocation(), GetPawn()->GetActorLocation());
+		if ((nearWaypoint < nearLeastPopular) ||
+			((nearWaypoint == nearLeastPopular) && (distWaypoint < distLeastPopular)))
+		{
+			leastPopular = waypoint;
+		}
+	}
+	Destination.Location = leastPopular->GetActorLocation();
+
+	return true;
 }
 
 void ANPC_Controller::SetTimerForNextMove()

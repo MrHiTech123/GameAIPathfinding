@@ -11,7 +11,8 @@ enum class ENPC_State : uint8
 {
 	WANDER UMETA(DisplayName = "Wander"),
 	ORDERED_WAYPOINT UMETA(DisplayName = "OrderedWaypoint"),
-	RANDOM_WAYPOINT UMETA(DisplayName = "RandomWaypoint")
+	RANDOM_WAYPOINT UMETA(DisplayName = "RandomWaypoint"),
+	LONELY_WAYPOINT UMETA(DisplayName = "LonelyWaypoint")
 };
 
 UCLASS()
@@ -58,7 +59,9 @@ public:
 	bool Wander(FNavLocation& Destination);
 	bool OrderedWaypoint(FNavLocation& Destination);
 	bool RandomWaypoint(FNavLocation& Destination);
+	bool NearEachOther(AActor* a, AActor* b);
+	int PeopleNearAmount(AActor* waypoint);
+	bool LonelyWaypoint(FNavLocation& Destination);
 	float DistanceFrom(AActor* other) const;
 	DistanceSortFunctor DistanceSortPredicate();
-	void SortWaypointsFromNearestToFurthest();
 };
